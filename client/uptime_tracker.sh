@@ -4,21 +4,18 @@
 # Run hourly via cron to keep the "to" timestamp current.
 # On each run it upserts the current boot session's interval in sessions.log.
 #
-# Cron entry: 0 * * * * /opt/iot/uptime_tracker.sh
+# Cron entry: 0 * * * * /opt/uptime/client/uptime_tracker.sh
 #
 # Log format: <boot_epoch> <current_epoch>
 # One line per boot session, updated in-place each hour.
 
-LOG_DIR="/var/lib/iot-uptime"
+LOG_DIR="$HOME/uptime"
 SESSIONS_LOG="$LOG_DIR/sessions.log"
 
 mkdir -p "$LOG_DIR"
 
 NOW_EPOCH=$(date -u +%s)
-UPTIME_SECS=$(awk '{print int($1)}' /proc/uptime)
-
-# Derive the epoch when this boot started
-BOOT_EPOCH=$(( NOW_EPOCH - UPTIME_SECS ))
+BOOT_EPOCH=$(awk '/btime/ {print int($2)}' /proc/stat)
 
 # Upsert this boot session: if a line starting with BOOT_EPOCH exists, update
 # the "to" timestamp; otherwise append a new line.

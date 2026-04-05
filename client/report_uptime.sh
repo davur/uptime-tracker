@@ -4,18 +4,18 @@
 # separate report with "from" and "to" epoch timestamps.
 # Retries unsent sessions on subsequent runs (handles offline days).
 #
-# Cron entry: 30 6 * * * /opt/iot/report_uptime.sh
+# Cron entry: 30 6 * * * /opt/uptime/client/report_uptime.sh
 #
 # Dependencies: curl, awk, sort, date
 
-LOG_DIR="/var/lib/iot-uptime"
+LOG_DIR="$HOME/uptime"
 SESSIONS_LOG="$LOG_DIR/sessions.log"
 SENT_LOG="$LOG_DIR/sent.log"    # boot epochs already successfully reported
 PENDING_DIR="$LOG_DIR/pending"  # one JSON file per pending session
 
-SERVER_URL="${IOT_SERVER_URL:-https://your-api-id.execute-api.us-east-1.amazonaws.com/prod/report}"
-DEVICE_ID="${IOT_DEVICE_ID:-$(cat /etc/machine-id 2>/dev/null || hostname)}"
-API_KEY="${IOT_API_KEY:-}"
+SERVER_URL="${UPTIME_SERVER_URL:-https://your-api-id.execute-api.us-east-1.amazonaws.com/prod/report}"
+DEVICE_ID="${UPTIME_DEVICE_ID:-$(cat /etc/machine-id 2>/dev/null || hostname)}"
+API_KEY="${UPTIME_API_KEY:-}"
 
 mkdir -p "$PENDING_DIR"
 touch "$SENT_LOG"
